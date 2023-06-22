@@ -23,17 +23,8 @@ def solution(wallpaper):
                         answer[1] = j
                     elif answer[3] < j:
                         answer[3] = j
-        
-    try:    
-        answer[2] +=1
-    except:
-        answer[2] = answer[0] +1
-       
-    try:    
-        answer[3] +=1 
-    except:
-        answer[3] = answer[1] +1
-        
-    
-   
+                        
+    answer[2] = answer[2]+1 if answer[2] else answer[0] +1   
+    answer[3] = answer[3]+1 if answer[3] else answer[1] +1
+
     return answer
