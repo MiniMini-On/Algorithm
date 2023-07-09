@@ -1,36 +1,51 @@
-import sys
+# 가장 많이 신뢰받는 컴퓨터 찾기 
+
 from collections import deque
-input = sys.stdin.readline
-N, M = map(int, input().split())
-A = [[] for _ in range(N + 1)]
-answer = [0] * (N + 1)
+import sys
+f = sys.stdin.readline
+
+n, m = map(int, f().split())
+
+graph = [[] for _ in range(n+1)]
 
 
-def BFS(v):
-    queue = deque()
-    queue.append(v)
-    visited[v] = True
-    while queue:
-        now_Node = queue.popleft()
-        for i in A[now_Node]:
-            if not visited[i]:
-                visited[i] = True
-                answer[i] += 1  # 신규 노드 인덱스의 정답 리스트 값을 증가
-                queue.append(i)
+
+#신뢰받은 컴퓨터 수
+num = [0] * (n+1)
+
+for _ in range(m):
+    a, b = map(int, f().split())
+    graph[a].append(b)
+    
+def bfs(start):
+    # 노드 방문 여부
+    v = [False] * (n+1)
+    
+    q = deque()
+    q.append(start)
+    
+    v[start] = True
+    
+
+    while q:
+        now = q.popleft()
+        for computer in graph[now]:
+            if v[computer] == False:
+               
+                v[computer] = True
+                num[computer] += 1
+                q.append(computer)
+            
+             
+for i in range(n):
+    bfs(i+1)
 
 
-for _ in range(M):
-    S, E = map(int, input().split())
-    A[S].append(E)
+max = max(num)
 
-for i in range(1, N + 1):  # 모든 노드에서 BFS 실행
-    visited = [False] * (N + 1)
-    BFS(i)
+ 
 
-maxVal = 0
-for i in range(1, N + 1):
-    maxVal = max(maxVal, answer[i])
+for index, i in enumerate(num):
+    if i == max:
+        print(index, end=' ')
 
-for i in range(1, N + 1):
-    if maxVal == answer[i]:
-        print(i, end=' ')
