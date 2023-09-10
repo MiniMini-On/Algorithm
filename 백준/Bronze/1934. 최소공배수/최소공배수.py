@@ -4,8 +4,8 @@ def gcd(a, b):
     else:
         return gcd(b, a % b)
 
-t = int(input())
-for i in range(t):
+n = int(input())
+for i in range(n):
     a, b = map(int, input().split())
     result = a * b / gcd(a, b)
     print(int(result))
