@@ -1,94 +1,46 @@
-from collections import deque
 import sys
-f = sys.stdin.readline
+from collections import deque
+input = sys.stdin.readline
 
-n = int(f())
-m = int(f())
+N = int(input())
+M = int(input())
+A = [[] for _ in range(N+1)]
+reverse = [[] for _ in range(N+1)]
+indegree = [0]*(N+1)  
 
+for i in range(M):
+    S, E, V = map(int, input().split())
+    A[S].append((E, V))
+    reverse[E].append((S, V))  
+    indegree[E] += 1    
 
-#인접 리스트 graph = [[인접지,시간],...]
-graph = [[] for _ in range(n+1)]
+start, end = map(int, input().split())
 
-rev_graph = [[] for _ in range(n+1)]
+queue = deque()
+queue.append(start)
+result = [0]*(N+1)
+while queue:    
+    now = queue.popleft()
+    for next in A[now]:
+        indegree[next[0]] -= 1
+        result[next[0]] = max(result[next[0]],result[now] + next[1])
+        if indegree[next[0]] == 0:
+            queue.append(next[0])
 
+resultCount = 0
+visited = [False]*(N+1)
+queue.clear()
+queue.append(end)
+visited[end] = True
 
+while queue:    
+    now = queue.popleft()
+    for next in reverse[now]:
+        if result[next[0]] + next[1] == result[now]:
+            resultCount += 1
+            if not visited[next[0]]:
+                visited[next[0]] = True
+                queue.append(next[0])
 
-#해당 도착지까지 루트 중 가장 오래 걸린 시간
-time = [0]*(n+1)
-
-# 진입차수 리스트 (인접 리스트에 -1을 하고 0가 되면 q에 넣는다)
-indegree = [0]*(n+1)    
-
-for _ in range(m):
-    s, a, t = map(int, f().split())
-    graph[s].append([a,t])
-    indegree[a] += 1
-    
-    rev_graph[a].append([s,t])
-
-
-s, a = map(int, f().split())
-
-def bfs(start):
-    q = deque()
-    q.append(start)
-    
-
-    
-    
-    while q:
-
-        now = q.popleft()
-        
-        for i in graph[now]:
-            
-            indegree[i[0]] -= 1
-            
-            if indegree[i[0]] == 0:
-                q.append(i[0])
-            
-            now_time = time[now] +i[1]
-            
-            # 가장 오래 걸리는 시간을 구하기 위해 비교함
-            if now_time > time[i[0]]:
-                
-                time[i[0]] = now_time
-                
-            
-                
-                
-
-bfs(s)  
-
-max_time = time[a]
-print(max_time, end='\n')
-
-count = 0
-
-#시간이 최대가 되도록 역추적
-def rev_dfs(end):
-    v = [False]*(n+1)
-    q = deque()
-    q.append(end)
-    v[end] = True
-    global count 
-
-    while q:
-        now = q.popleft()
-        for i in rev_graph[now]:
-            if time[i[0]] + i[1] == time[now]:
-                count += 1
-                if not v[i[0]]:
-                    v[i[0]] = True
-                    q.append(i[0])
-                
-
-rev_dfs(a)
-
-print(count, end='\n')
-
-
-
-
-   
-    
+print(result[end])
+print(resultCount)
