@@ -1,27 +1,33 @@
 import sys
 import heapq
 input = sys.stdin.readline
-N, M, K = map(int, input().split())
-W = [[] for _ in range(N+1)]
-distance = [[sys.maxsize] * K for _ in range(N+1)]
 
-for _ in range(M):
-    a, b, c = map(int, input().split())
-    W[a].append((b,c))
+n, r, k = map(int, input().split())
+dist = [[sys.maxsize]*k for _ in range(n+1)]
+myList = [[] for _ in range(n+1)]
 
-pq = [(0,1)]
-distance[1][0] = 0
+
+for _ in range(r):
+    s, e, d = map(int, input().split())
+    myList[s].append((d, e))
+
+pq = [(0, 1)]
+dist[1][0] = 0
+
 while pq:
-    cost,node = heapq.heappop(pq)
-    for nNode, nCost in W[node]:
-        sCost = cost + nCost
-        if distance[nNode][K-1] > sCost:
-            distance[nNode][K-1] = sCost
-            distance[nNode].sort()
-            heapq.heappush(pq, [sCost, nNode])
-
-for i in range(1,N+1):
-    if distance[i][K-1] == sys.maxsize:
+    current = heapq.heappop(pq)
+    current_node = current[1]
+    current_dist = current[0]
+    
+    for l in myList[current_node]:
+        if dist[l[1]][k-1] > current_dist + l[0]:
+            dist[l[1]][k-1] = current_dist + l[0]
+            dist[l[1]].sort()
+            heapq.heappush(pq, [current_dist + l[0], l[1]])
+            
+for i in range(1, n+1):
+    if dist[i][k-1] == sys.maxsize:
         print(-1)
     else:
-        print(distance[i][K-1])
+        print(dist[i][k-1])
+    
